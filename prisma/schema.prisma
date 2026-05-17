@@ -21,9 +21,10 @@ model User {
   sessions      Session[]
   accounts      Account[]
   passkeys      Passkey[]
-  files         FileMetadata[]
-  sharedWithMe  SharePermission[]
-  auditLogs     AuditLog[]
+  files          FileMetadata[]
+  uploadSessions UploadSession[]
+  sharedWithMe   SharePermission[]
+  auditLogs      AuditLog[]
 }
 
 model Session {
@@ -82,17 +83,45 @@ model FileMetadata {
   id             String   @id @default(uuid())
   ownerId        String
   owner          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  
-  encryptedName  String   
-  encryptedMime  String   
-  size           Int      
-  storageId      String   
-  
+
+  encryptedName  String
+  encryptedMime  String
+  encryptedDek   String   // DEK encrypted with owner's RSA public key
+  iv             String   // Base64-encoded 12-byte IV for AES-256-GCM
+  size           Int
+  chunkCount     Int      @default(1)
+  chunkSize      Int      @default(0)
+  storageId      String   // Object key in MinIO bucket
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  
+
   permissions    SharePermission[]
   auditLogs      AuditLog[]
+
+  @@index([ownerId])
+}
+
+// Tracks in-progress multipart uploads; cleaned up after completion or expiry
+model UploadSession {
+  id            String   @id @default(uuid())
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  minioUploadId String   // MinIO multipart upload ID
+  storageKey    String   // Object key in MinIO bucket
+
+  encryptedName String
+  encryptedMime String
+  encryptedDek  String
+  iv            String
+  size          Int
+  chunkCount    Int
+  chunkSize     Int
+
+  status        String   @default("pending") // pending | complete | aborted
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
 
   @@index([ownerId])
 }

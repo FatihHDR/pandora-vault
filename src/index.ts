@@ -1,66 +1,43 @@
-import { Elysia, t } from "elysia";
+import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
-import { auth, db } from "./auth";
+import { auth } from "./auth";
+import { ensureBucketExists } from "./lib/storage";
+import { fileRoutes } from "./routes/files";
+
+await ensureBucketExists();
 
 const app = new Elysia()
   .use(
     swagger({
       documentation: {
         info: {
-          title: "Personal Data Vault API",
-          version: "1.0.0",
-          description: "Zero-Knowledge Backend API - Phase 2: with Better Auth & RBAC",
+          title: "Pandora Vault API",
+          version: "3.0.0",
+          description:
+            "Zero-Knowledge Personal Data Vault — Phase 3: E2EE Storage with MinIO + Better Auth",
         },
+        tags: [
+          { name: "Health", description: "Service health" },
+          { name: "Auth", description: "Better Auth endpoints" },
+          { name: "Storage", description: "E2EE file upload, download, and management" },
+        ],
       },
     })
   )
   .group("/api/v1", (app) =>
     app
-      .get("/health", () => {
-        return { status: "ok", phase: 2, auth: "better-auth" };
+      .get(
+        "/health",
+        () => ({ status: "ok", phase: 3, auth: "better-auth", storage: "minio-e2ee" }),
+        { detail: { summary: "Health check", tags: ["Health"] } }
+      )
+      .all("/auth/*", ({ request }) => auth.handler(request), {
+        detail: { summary: "Better Auth handler", tags: ["Auth"] },
       })
-      
-      // Mount better-auth handler for /api/auth routes
-      .all("/auth/*", ({ request }) => {
-        return auth.handler(request);
-      })
-
-      // Granular Access Control RBAC example
-      .get("/files/:id", async ({ request, params: { id }, set }) => {
-        const session = await auth.api.getSession({ headers: request.headers });
-        if (!session || !session.user) {
-          set.status = 401;
-          return { error: "Unauthorized" };
-        }
-        
-        const file = await db.fileMetadata.findUnique({ 
-          where: { id },
-          include: { permissions: true }
-        });
-        
-        if (!file) {
-          set.status = 404;
-          return { error: "File not found" };
-        }
-
-        const isOwner = file.ownerId === session.user.id;
-        const hasPermission = file.permissions.some(p => p.userId === session.user.id && p.permissionType === "READ");
-        
-        if (!isOwner && !hasPermission) {
-          set.status = 403;
-          return { error: "Forbidden: You don't have access to this file." };
-        }
-
-        return { 
-          metadata: file,
-          message: isOwner ? "Granted access as owner" : "Granted access via share permission" 
-        };
-      }, {
-        detail: { summary: "Get file metadata (Requires Auth and Permissions)", tags: ["Storage"] }
-      })
+      .use(fileRoutes)
   )
   .listen(3000);
 
 console.log(
-  `🦊 Personal Data Vault (Phase 2 w/ Better Auth) is running at ${app.server?.hostname}:${app.server?.port}`
+  `Pandora Vault (Phase 3 — E2EE Storage) running at ${app.server?.hostname}:${app.server?.port}`
 );
