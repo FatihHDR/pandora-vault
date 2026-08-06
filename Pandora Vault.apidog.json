@@ -1,0 +1,1129 @@
+{
+  "apidogProject": "1.0.0",
+  "$schema": {
+    "app": "apidog",
+    "type": "project",
+    "version": "1.2.0"
+  },
+  "info": {
+    "name": "Pandora Vault",
+    "description": "",
+    "mockRule": {
+      "rules": [],
+      "enableSystemRule": true
+    }
+  },
+  "projectSetting": {
+    "id": "1352885",
+    "auth": {},
+    "securityScheme": {},
+    "gateway": [],
+    "language": "en-US",
+    "apiStatuses": [
+      "developing",
+      "testing",
+      "released",
+      "deprecated"
+    ],
+    "mockSettings": {},
+    "preProcessors": [],
+    "postProcessors": [],
+    "advancedSettings": {
+      "allowAutomationWriteAutomationCreatedSprintBranch": true,
+      "enableJsonc": false,
+      "enableBigint": false,
+      "responseValidate": true,
+      "enableTestScenarioSetting": false,
+      "enableYAPICompatScript": false,
+      "isDefaultUrlEncoding": 3,
+      "publishedDocUrlRules": {
+        "defaultRule": "SLUGIFY_WITH_RESOURCE_KEY",
+        "resourceKeyStandard": "NEW"
+      }
+    },
+    "initialDisabledMockIds": [],
+    "servers": [
+      {
+        "id": "default",
+        "name": "Local Dev Server",
+        "url": "http://localhost:3000",
+        "moduleId": 1403936
+      }
+    ],
+    "cloudMock": {
+      "enable": false,
+      "security": "free",
+      "tokenKey": "apidogToken",
+      "isCreatedAutomaticallyByDefaultConfigFromAdmin": true
+    }
+  },
+  "apiCollection": [
+    {
+      "name": "Root",
+      "id": 9955565,
+      "auth": {},
+      "securityScheme": {},
+      "parentId": 0,
+      "serverId": "",
+      "description": "",
+      "identityPattern": {
+        "httpApi": {
+          "type": "methodAndPath",
+          "bodyType": "",
+          "fields": []
+        }
+      },
+      "shareSettings": {},
+      "visibility": "SHARED",
+      "moduleId": 1403936,
+      "preProcessors": [
+        {
+          "id": "inheritProcessors",
+          "type": "inheritProcessors",
+          "data": {}
+        }
+      ],
+      "postProcessors": [
+        {
+          "id": "inheritProcessors",
+          "type": "inheritProcessors",
+          "data": {}
+        }
+      ],
+      "inheritPostProcessors": {},
+      "inheritPreProcessors": {},
+      "items": [
+        {
+          "name": "Health Check",
+          "api": {
+            "id": "41323131",
+            "method": "get",
+            "path": "/api/v1/health",
+            "parameters": {},
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462102",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "phase": {
+                      "type": "number",
+                      "example": 3
+                    },
+                    "auth": {
+                      "type": "string",
+                      "example": "better-auth"
+                    },
+                    "storage": {
+                      "type": "string",
+                      "example": "minio-e2ee"
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Health Response Example",
+                "data": "{\n  \"status\": \"ok\",\n  \"phase\": 3,\n  \"auth\": \"better-auth\",\n  \"storage\": \"minio-e2ee\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "required": false,
+              "mediaType": "",
+              "examples": []
+            },
+            "description": "Service health check endpoint",
+            "tags": [
+              "Health"
+            ],
+            "status": "released",
+            "ordering": 10,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Initialize E2EE Upload Session",
+          "api": {
+            "id": "41323132",
+            "method": "post",
+            "path": "/api/v1/files/upload/init",
+            "parameters": {},
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462103",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "fileId": {
+                      "type": "string",
+                      "example": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  }
+                },
+                "contentType": "json"
+              },
+              {
+                "id": "170462104",
+                "code": 401,
+                "name": "Unauthorized Error",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Init Success Response",
+                "data": "{\n  \"fileId\": \"550e8400-e29b-41d4-a716-446655440000\"\n}"
+              },
+              {
+                "name": "Unauthorized Error Response",
+                "data": "{\n  \"error\": \"Unauthorized\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "json",
+              "mediaType": "application/json",
+              "required": true,
+              "jsonSchema": {
+                "type": "object",
+                "required": [
+                  "encryptedName",
+                  "encryptedMime",
+                  "encryptedDek",
+                  "iv",
+                  "size",
+                  "chunkCount",
+                  "chunkSize"
+                ],
+                "properties": {
+                  "encryptedName": {
+                    "type": "string",
+                    "description": "AES-256-GCM encrypted filename (Base64)",
+                    "example": "aW1wb3J0YW50X2RvY3VtZW50LnBkZg=="
+                  },
+                  "encryptedMime": {
+                    "type": "string",
+                    "description": "AES-256-GCM encrypted MIME type (Base64)",
+                    "example": "YXBwbGljYXRpb24vcGRm"
+                  },
+                  "encryptedDek": {
+                    "type": "string",
+                    "description": "DEK encrypted with user RSA-OAEP public key (Base64)",
+                    "example": "V0VrU1ExTlhRMjVvZEhKd1lYSjVhVzVuU0VSUFVFWlBWRkpQVEVSZlgxOUpWRnNn..."
+                  },
+                  "iv": {
+                    "type": "string",
+                    "description": "Base64-encoded 12-byte GCM initialization vector",
+                    "example": "QUJDREVGR0hJSktM"
+                  },
+                  "size": {
+                    "type": "number",
+                    "description": "Total plaintext file size in bytes (max ~2GB)",
+                    "example": 10485760
+                  },
+                  "chunkCount": {
+                    "type": "number",
+                    "description": "Total number of encrypted chunks",
+                    "example": 2
+                  },
+                  "chunkSize": {
+                    "type": "number",
+                    "description": "Size of each chunk in bytes (last chunk may be smaller)",
+                    "example": 5242880
+                  }
+                }
+              },
+              "examples": [
+                {
+                  "name": "Init Request Example",
+                  "data": "{\n  \"encryptedName\": \"aW1wb3J0YW50X2RvY3VtZW50LnBkZg==\",\n  \"encryptedMime\": \"YXBwbGljYXRpb24vcGRm\",\n  \"encryptedDek\": \"V0VrU1ExTlhRMjVvZEhKd1lYSjVhVzVuU0VSUFVFWlBWRkpQVEVSZlgxOUpWRnNn...\",\n  \"iv\": \"QUJDREVGR0hJSktM\",\n  \"size\": 10485760,\n  \"chunkCount\": 2,\n  \"chunkSize\": 5242880\n}"
+                }
+              ]
+            },
+            "description": "Starts a MinIO multipart upload. The server never receives plaintext — all encryption must happen client-side before calling this endpoint.",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 20,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Upload Encrypted Chunk",
+          "api": {
+            "id": "41323133",
+            "method": "put",
+            "path": "/api/v1/files/{fileId}/chunks/{chunkIndex}",
+            "parameters": {
+              "path": [
+                {
+                  "name": "fileId",
+                  "required": true,
+                  "description": "Upload session ID",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                {
+                  "name": "chunkIndex",
+                  "required": true,
+                  "description": "1-based chunk index",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "1"
+                }
+              ]
+            },
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462105",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "chunkIndex": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "etag": {
+                      "type": "string",
+                      "example": "\"e2fc714c4727ee9395f324cd2e7f331f\""
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Chunk Upload Response Example",
+                "data": "{\n  \"chunkIndex\": 1,\n  \"etag\": \"\\\"e2fc714c4727ee9395f324cd2e7f331f\\\"\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "binary",
+              "mediaType": "application/octet-stream",
+              "required": true,
+              "description": "Raw binary ciphertext chunk payload",
+              "examples": [
+                {
+                  "name": "Binary Chunk Payload",
+                  "data": "[Binary AES-256-GCM Ciphertext Chunk Bytes]"
+                }
+              ]
+            },
+            "description": "Sends a single AES-256-GCM ciphertext chunk as raw binary. Collect the returned ETag and pass all ETags to /complete.",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 30,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Finalize Encrypted Upload",
+          "api": {
+            "id": "41323134",
+            "method": "post",
+            "path": "/api/v1/files/{fileId}/complete",
+            "parameters": {
+              "path": [
+                {
+                  "name": "fileId",
+                  "required": true,
+                  "description": "Upload session ID",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              ]
+            },
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462106",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "fileId": {
+                      "type": "string",
+                      "example": "550e8400-e29b-41d4-a716-446655440000"
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Complete Response Example",
+                "data": "{\n  \"fileId\": \"550e8400-e29b-41d4-a716-446655440000\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "json",
+              "mediaType": "application/json",
+              "required": true,
+              "jsonSchema": {
+                "type": "object",
+                "required": [
+                  "parts"
+                ],
+                "properties": {
+                  "parts": {
+                    "type": "array",
+                    "description": "All parts in any order; server sorts by partNumber before finalizing",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "partNumber",
+                        "etag"
+                      ],
+                      "properties": {
+                        "partNumber": {
+                          "type": "number",
+                          "description": "1-based part number matching the chunk index",
+                          "example": 1
+                        },
+                        "etag": {
+                          "type": "string",
+                          "description": "ETag returned by the chunk upload endpoint",
+                          "example": "\"e2fc714c4727ee9395f324cd2e7f331f\""
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": [
+                {
+                  "name": "Complete Parts Request Example",
+                  "data": "{\n  \"parts\": [\n    {\n      \"partNumber\": 1,\n      \"etag\": \"\\\"e2fc714c4727ee9395f324cd2e7f331f\\\"\"\n    },\n    {\n      \"partNumber\": 2,\n      \"etag\": \"\\\"8f9211c4727ee9395f324cd2e7f332a\\\"\"\n    }\n  ]\n}"
+                }
+              ]
+            },
+            "description": "Finalizes the MinIO multipart upload and promotes the upload session to a persisted FileMetadata record.",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 40,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Abort Upload Session",
+          "api": {
+            "id": "41323135",
+            "method": "post",
+            "path": "/api/v1/files/{fileId}/abort",
+            "parameters": {
+              "path": [
+                {
+                  "name": "fileId",
+                  "required": true,
+                  "description": "Upload session ID",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              ]
+            },
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462107",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Upload aborted"
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Abort Response Example",
+                "data": "{\n  \"message\": \"Upload aborted\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "required": false,
+              "mediaType": "",
+              "examples": []
+            },
+            "description": "Cancels an in-progress upload and cleans up MinIO state.",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 50,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Get File Metadata & E2EE Keys",
+          "api": {
+            "id": "41323136",
+            "method": "get",
+            "path": "/api/v1/files/{id}",
+            "parameters": {
+              "path": [
+                {
+                  "name": "id",
+                  "required": true,
+                  "description": "File ID",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              ]
+            },
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462108",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "550e8400-e29b-41d4-a716-446655440000"
+                    },
+                    "encryptedName": {
+                      "type": "string",
+                      "example": "aW1wb3J0YW50X2RvY3VtZW50LnBkZg=="
+                    },
+                    "encryptedMime": {
+                      "type": "string",
+                      "example": "YXBwbGljYXRpb24vcGRm"
+                    },
+                    "encryptedDek": {
+                      "type": "string",
+                      "example": "V0VrU1ExTlhRMjVvZEhKd1lYSjVhVzVuU0VSUFVFWlBWRkpQVEVSZlgxOUpWRnNn..."
+                    },
+                    "iv": {
+                      "type": "string",
+                      "example": "QUJDREVGR0hJSktM"
+                    },
+                    "size": {
+                      "type": "number",
+                      "example": 10485760
+                    },
+                    "chunkCount": {
+                      "type": "number",
+                      "example": 2
+                    },
+                    "chunkSize": {
+                      "type": "number",
+                      "example": 5242880
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "example": "2026-08-06T16:00:00.000Z"
+                    },
+                    "access": {
+                      "type": "string",
+                      "example": "owner"
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Metadata Response Example",
+                "data": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"encryptedName\": \"aW1wb3J0YW50X2RvY3VtZW50LnBkZg==\",\n  \"encryptedMime\": \"YXBwbGljYXRpb24vcGRm\",\n  \"encryptedDek\": \"V0VrU1ExTlhRMjVvZEhKd1lYSjVhVzVuU0VSUFVFWlBWRkpQVEVSZlgxOUpWRnNn...\",\n  \"iv\": \"QUJDREVGR0hJSktM\",\n  \"size\": 10485760,\n  \"chunkCount\": 2,\n  \"chunkSize\": 5242880,\n  \"createdAt\": \"2026-08-06T16:00:00.000Z\",\n  \"access\": \"owner\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "required": false,
+              "mediaType": "",
+              "examples": []
+            },
+            "description": "Returns file metadata including the E2EE parameters the client needs to decrypt (encryptedDek and iv).",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 60,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Stream Download Ciphertext",
+          "api": {
+            "id": "41323137",
+            "method": "get",
+            "path": "/api/v1/files/{id}/stream",
+            "parameters": {
+              "path": [
+                {
+                  "name": "id",
+                  "required": true,
+                  "description": "File ID",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              ]
+            },
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462109",
+                "code": 200,
+                "name": "Success - Ciphertext Stream",
+                "jsonSchema": {
+                  "type": "string",
+                  "format": "binary"
+                },
+                "contentType": "octet-stream"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Raw Stream Header Info",
+                "data": "Headers:\n  Content-Type: application/octet-stream\n  Content-Disposition: attachment; filename=\"550e8400-e29b-41d4-a716-446655440000.enc\"\n  X-Chunk-Count: 2\n  X-Chunk-Size: 5242880\n  X-IV: QUJDREVGR0hJSktM\n\n[Body: Raw Binary AES-256-GCM Ciphertext Stream]"
+              }
+            ],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "required": false,
+              "mediaType": "",
+              "examples": []
+            },
+            "description": "Streams the raw ciphertext from MinIO. Call GET /files/:id first to obtain encryptedDek and iv for client-side decryption.",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 70,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Delete File",
+          "api": {
+            "id": "41323138",
+            "method": "delete",
+            "path": "/api/v1/files/{id}",
+            "parameters": {
+              "path": [
+                {
+                  "name": "id",
+                  "required": true,
+                  "description": "File ID",
+                  "schema": {
+                    "type": "string"
+                  },
+                  "example": "550e8400-e29b-41d4-a716-446655440000"
+                }
+              ]
+            },
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462110",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "File deleted"
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Delete Response Example",
+                "data": "{\n  \"message\": \"File deleted\"\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "none",
+              "parameters": [],
+              "required": false,
+              "mediaType": "",
+              "examples": []
+            },
+            "description": "Deletes the file from MinIO and removes the FileMetadata record. Owner-only.",
+            "tags": [
+              "Storage"
+            ],
+            "status": "released",
+            "ordering": 80,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        },
+        {
+          "name": "Better Auth Sign In (Sample)",
+          "api": {
+            "id": "41323139",
+            "method": "post",
+            "path": "/api/v1/auth/sign-in/email",
+            "parameters": {},
+            "auth": {},
+            "securityScheme": {},
+            "commonParameters": {
+              "query": [],
+              "body": [],
+              "cookie": [],
+              "header": []
+            },
+            "responses": [
+              {
+                "id": "170462111",
+                "code": 200,
+                "name": "Success",
+                "jsonSchema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "sess_abc123xyz"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "usr_998877"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Fatih"
+                        }
+                      }
+                    }
+                  }
+                },
+                "contentType": "json"
+              }
+            ],
+            "responseExamples": [
+              {
+                "name": "Auth Sign In Response Example",
+                "data": "{\n  \"session\": {\n    \"token\": \"sess_abc123xyz\",\n    \"userId\": \"usr_998877\",\n    \"expiresAt\": \"2026-09-06T16:00:00.000Z\"\n  },\n  \"user\": {\n    \"id\": \"usr_998877\",\n    \"email\": \"user@example.com\",\n    \"name\": \"Fatih\",\n    \"emailVerified\": true\n  }\n}"
+              }
+            ],
+            "requestBody": {
+              "type": "json",
+              "mediaType": "application/json",
+              "required": true,
+              "jsonSchema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "SuperSecurePassword123!"
+                  }
+                }
+              },
+              "examples": [
+                {
+                  "name": "Sign In Request Example",
+                  "data": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SuperSecurePassword123!\"\n}"
+                }
+              ]
+            },
+            "description": "Better Auth sign-in endpoint using email and password credentials.",
+            "tags": [
+              "Auth"
+            ],
+            "status": "released",
+            "ordering": 90,
+            "visibility": "INHERITED",
+            "moduleId": 1403936,
+            "type": "http"
+          }
+        }
+      ]
+    }
+  ],
+  "socketCollection": [],
+  "docCollection": [],
+  "webSocketCollection": [],
+  "socketIOCollection": [],
+  "mcpClientCollection": [],
+  "responseCollection": [
+    {
+      "_databaseId": 1694672,
+      "updatedAt": "2026-08-06T09:08:50.000Z",
+      "id": 1694672,
+      "name": "Root",
+      "type": "root",
+      "children": [],
+      "moduleId": 1403936,
+      "parentId": 0,
+      "ordering": [],
+      "items": []
+    }
+  ],
+  "schemaCollection": [
+    {
+      "id": 3665224,
+      "name": "Root",
+      "visibility": "SHARED",
+      "moduleId": 1403936,
+      "items": [],
+      "ordering": []
+    }
+  ],
+  "securitySchemeCollection": [
+    {
+      "id": 1962767,
+      "moduleId": 1403936,
+      "name": "Root",
+      "items": [],
+      "ordering": []
+    }
+  ],
+  "oasComponentCollection": [],
+  "requestCollection": [
+    {
+      "name": "Root",
+      "children": [],
+      "ordering": [
+        "requestFolder.11100891"
+      ],
+      "items": []
+    }
+  ],
+  "apiTestCaseCollection": [
+    {
+      "id": 0,
+      "name": "Root",
+      "children": [],
+      "items": []
+    }
+  ],
+  "testCaseReferences": [],
+  "environments": [],
+  "commonScripts": [],
+  "databaseConnections": [],
+  "globalVariables": [],
+  "commonParameters": null,
+  "customFunctions": [],
+  "projectTestCaseCategories": [
+    {
+      "id": 1698798,
+      "name": "Positive",
+      "description": "Valid inputs and correct expected results, representing typical usage."
+    },
+    {
+      "id": 1698799,
+      "name": "Negative",
+      "description": "Negative, invalid inputs such as missing fields, wrong types, unsupported methods, etc."
+    },
+    {
+      "id": 1698800,
+      "name": "Boundary",
+      "description": "Extreme or edge conditions, such as maximum string length, empty values, zero, null, etc."
+    },
+    {
+      "id": 1698801,
+      "name": "Security",
+      "description": "Test cases that may expose API security risks."
+    },
+    {
+      "id": 1698802,
+      "name": "Other",
+      "description": "Test cases not classified under existing categories."
+    }
+  ],
+  "projectTestCaseTags": [
+    {
+      "id": 8133867,
+      "name": "Required Fields Only",
+      "description": "Send only the required fields with valid values, omitting all optional fields, to test minimal valid requests."
+    },
+    {
+      "id": 8133868,
+      "name": "Valid Semantic",
+      "description": "Use values that are syntactically correct and also make sense in the business logic or domain context."
+    },
+    {
+      "id": 8133869,
+      "name": "Enum Combination Coverage",
+      "description": "For all enum-type parameters, apply orthogonal design to systematically construct test case combinations of parameters and their enum values, dedicated to testing enum coverage."
+    },
+    {
+      "id": 8133870,
+      "name": "Other Positive Case",
+      "description": "Provide realistic and valid inputs that match the API specification, producing the correct and expected result."
+    },
+    {
+      "id": 8133871,
+      "name": "Missing Required Fields",
+      "description": "Omit one or more required fields in the request body or parameters."
+    },
+    {
+      "id": 8133872,
+      "name": "Invalid Values",
+      "description": "Provide values that are within the correct type and format, but logically invalid for the field."
+    },
+    {
+      "id": 8133873,
+      "name": "Type Errors",
+      "description": "Use values with incorrect data types, such as sending a string instead of an integer."
+    },
+    {
+      "id": 8133874,
+      "name": "Format Errors",
+      "description": "Provide values in an incorrect format, e.g., wrong date pattern, malformed email address."
+    },
+    {
+      "id": 8133875,
+      "name": "Semantic Errors",
+      "description": "Use syntactically correct and properly formatted values that are logically impossible or violate domain rules."
+    },
+    {
+      "id": 8133876,
+      "name": "Other Negative Case",
+      "description": "Provide invalid or unexpected inputs that should trigger error handling or rejection by the API."
+    },
+    {
+      "id": 8133877,
+      "name": "Null",
+      "description": "Must be the JSON literal `null` (not empty, not \"null\")."
+    },
+    {
+      "id": 8133878,
+      "name": "Zero",
+      "description": "Must be the numeric literal 0."
+    },
+    {
+      "id": 8133879,
+      "name": "Empty Values",
+      "description": "Must be \"\"."
+    },
+    {
+      "id": 8133880,
+      "name": "Max Values",
+      "description": "Provide the exact minimum and maximum allowed values for numeric or date fields."
+    },
+    {
+      "id": 8133881,
+      "name": "Min Values",
+      "description": "Provide the exact minimum and maximum allowed values for numeric or date fields."
+    },
+    {
+      "id": 8133882,
+      "name": "Overflow",
+      "description": "Provide values just beyond the allowed minimum or maximum boundaries."
+    },
+    {
+      "id": 8133883,
+      "name": "Underflow",
+      "description": "Provide values just beyond the allowed minimum or maximum boundaries."
+    },
+    {
+      "id": 8133884,
+      "name": "Overly Long Strings",
+      "description": "Provide strings longer than the maximum allowed length, or shorter than the minimum required length."
+    },
+    {
+      "id": 8133885,
+      "name": "Overly Short Strings",
+      "description": "Provide strings longer than the maximum allowed length, or shorter than the minimum required length."
+    },
+    {
+      "id": 8133886,
+      "name": "Broken Object Level Authorization",
+      "description": "Users access or manipulate data objects without proper authorization."
+    },
+    {
+      "id": 8133887,
+      "name": "Access Control",
+      "description": "Restricting resources and actions users can access based on roles, permissions, or attributes."
+    },
+    {
+      "id": 8133888,
+      "name": "Auth Failures",
+      "description": "Authentication is weak, misconfigured, or bypassed, allowing unauthorized access."
+    },
+    {
+      "id": 8133889,
+      "name": "SQL Injection",
+      "description": "Insert malicious SQL code into input fields to test for SQL injection vulnerabilities."
+    },
+    {
+      "id": 8133890,
+      "name": "XSS Injection",
+      "description": "Inject JavaScript or HTML tags to test for cross-site scripting vulnerabilities."
+    },
+    {
+      "id": 8133891,
+      "name": "Fuzzy Input",
+      "description": "Send large or randomly generated payloads to test input validation and stability."
+    },
+    {
+      "id": 8133892,
+      "name": "Command Injection",
+      "description": "Insert shell commands into inputs to test for command execution vulnerabilities."
+    },
+    {
+      "id": 8133893,
+      "name": "JSON Injection",
+      "description": "Insert malicious or unexpected JSON structures to test parsing and validation."
+    },
+    {
+      "id": 8133894,
+      "name": "NoSQL Injection",
+      "description": "Provide NoSQL-specific malicious queries or operators to test for injection vulnerabilities."
+    },
+    {
+      "id": 8133895,
+      "name": "Other",
+      "description": "Test cases not classified under existing categories."
+    }
+  ],
+  "projectAssociations": [],
+  "moduleSettings": [
+    {
+      "id": "1403936",
+      "name": "Default module",
+      "description": "",
+      "moduleVariables": [],
+      "openApiInfo": {}
+    }
+  ]
+}
